@@ -1,477 +1,381 @@
 import random
-from os import X_OK, system, name
+from os import system, name
+from time import sleep
 
 
-def limpaTela():
+def cleanScreen():
     if name == "nt":
         system("cls")
     else:
         system("clear")
 
 
-def defe(tabuleiro, simboloComputador, x, y, z):
+def printsResults(playerWins, computerWins, draws):
+    print(f"W: {playerWins}\tD: {draws}\tL: {computerWins}\n")
+
+
+def defe(board, computerSymbol, x, y, z):
     """
-    Verifica se o parâmetro "x" e "y" são diferentes de vazio e do símbolo do Computador, bem como verifica se o parâmetro "z" é vazio:
-    Se sim, retorna True, senão, retorna False.
+    Checks if parameter "x" and "y" are different from empty and Computer symbol, as well as checks if parameter "z" is empty:
+    If yes, it returns True, otherwise, it returns False.
     """
     if (
-        tabuleiro[x] != simboloComputador
-        and tabuleiro[x] != " "
-        and tabuleiro[y] != simboloComputador
-        and tabuleiro[y] != " "
-        and tabuleiro[z] == " "
+        board[x] != computerSymbol
+        and board[x] != " "
+        and board[y] != computerSymbol
+        and board[y] != " "
+        and board[z] == " "
     ):
         return True
     return False
 
 
-def jogadaComputador(tabuleiro, simboloComputador):
+def computerMove(board, computerSymbol):
     """
-    Recebe o tabuleiro e o simbolo (X ou O) do computador e determina onde o computador deve jogar
-    O tabuleiro pode estar vazio (caso o computador seja o primeiro a jogar) ou com algumas posições preenchidas,
-    sendo a posição 0 do tabuleiro descartada.
+    Receives the board and symbol (X or O) from the computer and determines where the computer should play
+    The board can be empty (if the computer is the first to play) or with some positions filled,
+    being the board position 0 discarded.
 
-    Parâmetros:
-    tabuleiro: lista de tamanho 10 representando o tabuleiro
-    simboloComputador: letra do computador
+    Parameters:
+    board: list of size 10 representing the board
+    computerSymbol: computer letter
 
-    Retorno:
-    Posição (entre 1 e 9) da jogada do computador
+    Return:
+    Position (between 1 and 9) of the computer's move
 
-    Estratégia:
-    # Explique aqui, de forma resumida, a sua estratégia usada para o computador vencer o jogador
+    Strategy:
 
-    O computador verificará se há alguma possível combinação que o faça vencer,
-    caso não vença, ele irá bloquear, da maneira possível, a vitória do usuário (se houver a chance de o usuário vencer).
-    Se não houver chance de vitória ou jogadas de defesa a serem feitas, então ele simplesmente irá selecionar uma espaço vazio com a ordem de prioridade:
-    [1], [2], [5], [7], [9], [3], [4], [6], [8].
+
+    The computer will check if there are any possible winning combinations,
+    if it doesn't win, it will block, as much as possible, the user's victory (if there is a chance for the user to win).
+    If there is no winning chance or defense rolls to be made, then he will simply select an empty space with the order of priority:
+    [1], [2], [5], [9], [7], [3], [4], [6], [8].
     """
     # Combinações para vencer
-    if (
-        tabuleiro[1] == simboloComputador
-        and tabuleiro[2] == simboloComputador
-        and tabuleiro[3] == " "
-    ):
+    if board[1] == computerSymbol and board[2] == computerSymbol and board[3] == " ":
         j = 3
-    elif (
-        tabuleiro[1] == simboloComputador
-        and tabuleiro[3] == simboloComputador
-        and tabuleiro[2] == " "
-    ):
+    elif board[1] == computerSymbol and board[3] == computerSymbol and board[2] == " ":
         j = 2
-    elif (
-        tabuleiro[2] == simboloComputador
-        and tabuleiro[3] == simboloComputador
-        and tabuleiro[1] == " "
-    ):
+    elif board[2] == computerSymbol and board[3] == computerSymbol and board[1] == " ":
         j = 1
-    elif (
-        tabuleiro[4] == simboloComputador
-        and tabuleiro[5] == simboloComputador
-        and tabuleiro[6] == " "
-    ):
+    elif board[4] == computerSymbol and board[5] == computerSymbol and board[6] == " ":
         j = 6
-    elif (
-        tabuleiro[4] == simboloComputador
-        and tabuleiro[6] == simboloComputador
-        and tabuleiro[5] == " "
-    ):
+    elif board[4] == computerSymbol and board[6] == computerSymbol and board[5] == " ":
         j = 5
-    elif (
-        tabuleiro[5] == simboloComputador
-        and tabuleiro[6] == simboloComputador
-        and tabuleiro[4] == " "
-    ):
+    elif board[5] == computerSymbol and board[6] == computerSymbol and board[4] == " ":
         j = 4
-    elif (
-        tabuleiro[7] == simboloComputador
-        and tabuleiro[8] == simboloComputador
-        and tabuleiro[9] == " "
-    ):
+    elif board[7] == computerSymbol and board[8] == computerSymbol and board[9] == " ":
         j = 9
-    elif (
-        tabuleiro[7] == simboloComputador
-        and tabuleiro[9] == simboloComputador
-        and tabuleiro[8] == " "
-    ):
+    elif board[7] == computerSymbol and board[9] == computerSymbol and board[8] == " ":
         j = 8
-    elif (
-        tabuleiro[2] == simboloComputador
-        and tabuleiro[5] == simboloComputador
-        and tabuleiro[8] == " "
-    ):
+    elif board[2] == computerSymbol and board[5] == computerSymbol and board[8] == " ":
         j = 8
-    elif (
-        tabuleiro[9] == simboloComputador
-        and tabuleiro[8] == simboloComputador
-        and tabuleiro[7] == " "
-    ):
+    elif board[9] == computerSymbol and board[8] == computerSymbol and board[7] == " ":
         j = 7
-    elif (
-        tabuleiro[3] == simboloComputador
-        and tabuleiro[5] == simboloComputador
-        and tabuleiro[7] == " "
-    ):
+    elif board[3] == computerSymbol and board[5] == computerSymbol and board[7] == " ":
         j = 7
-    elif (
-        tabuleiro[1] == simboloComputador
-        and tabuleiro[4] == simboloComputador
-        and tabuleiro[7] == " "
-    ):
+    elif board[1] == computerSymbol and board[4] == computerSymbol and board[7] == " ":
         j = 7
-    elif (
-        tabuleiro[1] == simboloComputador
-        and tabuleiro[5] == simboloComputador
-        and tabuleiro[9] == " "
-    ):
+    elif board[1] == computerSymbol and board[5] == computerSymbol and board[9] == " ":
         j = 9
-    elif (
-        tabuleiro[1] == simboloComputador
-        and tabuleiro[9] == simboloComputador
-        and tabuleiro[5] == " "
-    ):
+    elif board[1] == computerSymbol and board[9] == computerSymbol and board[5] == " ":
         j = 5
-    elif (
-        tabuleiro[5] == simboloComputador
-        and tabuleiro[9] == simboloComputador
-        and tabuleiro[1] == " "
-    ):
+    elif board[5] == computerSymbol and board[9] == computerSymbol and board[1] == " ":
         j = 1
-    elif (
-        tabuleiro[7] == simboloComputador
-        and tabuleiro[1] == simboloComputador
-        and tabuleiro[4] == " "
-    ):
+    elif board[7] == computerSymbol and board[1] == computerSymbol and board[4] == " ":
         j = 4
-    elif (
-        tabuleiro[8] == simboloComputador
-        and tabuleiro[5] == simboloComputador
-        and tabuleiro[2] == " "
-    ):
+    elif board[8] == computerSymbol and board[5] == computerSymbol and board[2] == " ":
         j = 2
-    elif (
-        tabuleiro[9] == simboloComputador
-        and tabuleiro[3] == simboloComputador
-        and tabuleiro[6] == " "
-    ):
+    elif board[9] == computerSymbol and board[3] == computerSymbol and board[6] == " ":
         j = 6
-    elif (
-        tabuleiro[7] == simboloComputador
-        and tabuleiro[5] == simboloComputador
-        and tabuleiro[3] == " "
-    ):
+    elif board[7] == computerSymbol and board[5] == computerSymbol and board[3] == " ":
         j = 3
-    elif (
-        tabuleiro[3] == simboloComputador
-        and tabuleiro[6] == simboloComputador
-        and tabuleiro[9] == " "
-    ):
+    elif board[3] == computerSymbol and board[6] == computerSymbol and board[9] == " ":
         j = 9
-    elif (
-        tabuleiro[9] == simboloComputador
-        and tabuleiro[6] == simboloComputador
-        and tabuleiro[3] == " "
-    ):
+    elif board[9] == computerSymbol and board[6] == computerSymbol and board[3] == " ":
         j = 3
 
-    # Combinações para se defender
-    elif defe(tabuleiro, simboloComputador, 1, 2, 3):
-        return 3
-    elif defe(tabuleiro, simboloComputador, 1, 3, 2):
-        return 2
-    elif defe(tabuleiro, simboloComputador, 8, 5, 2):
-        return 2
-    elif defe(tabuleiro, simboloComputador, 2, 3, 1):
-        return 1
-    elif defe(tabuleiro, simboloComputador, 4, 5, 6):
-        return 6
-    elif defe(tabuleiro, simboloComputador, 4, 6, 5):
-        return 5
-    elif defe(tabuleiro, simboloComputador, 5, 6, 4):
-        return 4
-    elif defe(tabuleiro, simboloComputador, 7, 1, 4):
-        return 4
-    elif defe(tabuleiro, simboloComputador, 7, 8, 9):
-        return 9
-    elif defe(tabuleiro, simboloComputador, 7, 9, 8):
-        return 8
-    elif defe(tabuleiro, simboloComputador, 9, 8, 7):
-        return 7
-    elif defe(tabuleiro, simboloComputador, 1, 4, 7):
-        return 7
-    elif defe(tabuleiro, simboloComputador, 1, 5, 9):
-        return 9
-    elif defe(tabuleiro, simboloComputador, 1, 9, 5):
-        return 5
-    elif defe(tabuleiro, simboloComputador, 5, 9, 1):
-        return 1
-    elif defe(tabuleiro, simboloComputador, 3, 5, 7):
-        return 7
-    elif defe(tabuleiro, simboloComputador, 2, 5, 8):
-        return 8
-    elif defe(tabuleiro, simboloComputador, 9, 3, 6):
-        return 6
-    elif defe(tabuleiro, simboloComputador, 9, 6, 3):
-        return 3
-    elif defe(tabuleiro, simboloComputador, 3, 6, 9):
-        return 9
-    elif defe(tabuleiro, simboloComputador, 7, 2, 5):
-        return 5
-    elif defe(tabuleiro, simboloComputador, 2, 8, 5):
-        return 5
-    elif defe(tabuleiro, simboloComputador, 7, 3, 8) or defe(
-        tabuleiro, simboloComputador, 9, 1, 8
-    ):
-        return 8
-    elif defe(tabuleiro, simboloComputador, 7, 5, 3):
-        return 3
-    elif defe(tabuleiro, simboloComputador, 7, 4, 1):
-        return 1
+    # Combinations to defend yourself.
+
     elif (
-        tabuleiro[1] == simboloComputador
-        and tabuleiro[8] == simboloComputador
-        and tabuleiro[9] == " "
-    ):
-        j = 9
-    elif (
-        tabuleiro[3] == simboloComputador
-        and tabuleiro[8] == simboloComputador
-        and tabuleiro[7] == " "
-    ):
-        j = 7
-    elif (
-        tabuleiro[9] == simboloComputador
-        and tabuleiro[2] == simboloComputador
-        and tabuleiro[1] == " "
+        board[7] == computerSymbol
+        and board[8] != computerSymbol
+        and board[9] != computerSymbol
+        and board[5] == computerSymbol
+        and board[6] == computerSymbol
+        and board[3] != computerSymbol
+        and board[4] != computerSymbol
+        and board[1] == " "
     ):
         j = 1
-    elif (
-        tabuleiro[7] == simboloComputador
-        and tabuleiro[2] == simboloComputador
-        and tabuleiro[3] == " "
-    ):
-        j = 3
-    elif (
-        tabuleiro[6] != simboloComputador
-        and tabuleiro[6] != " "
-        and defe(tabuleiro, simboloComputador, 8, 2, 9)
-    ):
-        return 9
 
     elif (
-        tabuleiro[8] != simboloComputador
-        and tabuleiro[7] == simboloComputador
-        and tabuleiro[4] != simboloComputador
-        and tabuleiro[3] == " "
-    ):
-        j = 5
-
-    elif (
-        tabuleiro[1] == simboloComputador
-        and tabuleiro[3] == simboloComputador
-        and tabuleiro[4] != simboloComputador
-        and tabuleiro[5] == " "
-    ):
-        j = 5
-
-    elif (
-        tabuleiro[1] == simboloComputador
-        and tabuleiro[2] != simboloComputador
-        and tabuleiro[3] == simboloComputador
-        and tabuleiro[7] == " "
-    ):
-        j = 7
-    elif (
-        tabuleiro[1] == simboloComputador
-        and tabuleiro[3] == simboloComputador
-        and tabuleiro[5] == " "
-    ):
-        j = 5
-    elif (
-        tabuleiro[1] == simboloComputador
-        and tabuleiro[2] != simboloComputador
-        and tabuleiro[2] != " "
-        and tabuleiro[4] == " "
-    ):
-        j = 4
-    elif (
-        tabuleiro[1] == simboloComputador
-        and tabuleiro[5] != simboloComputador
-        and tabuleiro[5] != " "
-        and tabuleiro[9] == " "
-    ):
-        j = 9
-    elif (
-        tabuleiro[1] == simboloComputador
-        and tabuleiro[7] != simboloComputador
-        and tabuleiro[7] != " "
-        and tabuleiro[9] == " "
-    ):
-        j = 9
-    elif (
-        tabuleiro[8] != simboloComputador
-        and tabuleiro[8] != " "
-        and tabuleiro[3] != simboloComputador
-        and tabuleiro[3] != " "
-        and tabuleiro[9] == " "
-    ):
-        j = 9
-
-    elif (
-        tabuleiro[2] != simboloComputador
-        and tabuleiro[2] != " "
-        and tabuleiro[4] != simboloComputador
-        and tabuleiro[4] != " "
-        and tabuleiro[5] == " "
-    ):
-        j = 5
-    elif (
-        tabuleiro[6] != simboloComputador
-        and tabuleiro[6] != " "
-        and tabuleiro[2] != simboloComputador
-        and tabuleiro[2] != " "
-        and tabuleiro[3] == simboloComputador
-        and tabuleiro[5] == " "
-    ):
-        j = 5
-    elif (
-        tabuleiro[8] != simboloComputador
-        and tabuleiro[8] != " "
-        and tabuleiro[6] != simboloComputador
-        and tabuleiro[6] != " "
-        and tabuleiro[3] == " "
-    ):
-        j = 3
-    elif (
-        tabuleiro[8] != simboloComputador
-        and tabuleiro[8] != " "
-        and tabuleiro[6] != simboloComputador
-        and tabuleiro[6] != " "
-        and tabuleiro[1] == " "
-    ):
-        j = 1
-    elif (
-        tabuleiro[8] != simboloComputador
-        and tabuleiro[8] != " "
-        and tabuleiro[4] != simboloComputador
-        and tabuleiro[4] != " "
-        and tabuleiro[1] == " "
-    ):
-        j = 7
-    elif (
-        tabuleiro[2] != simboloComputador
-        and tabuleiro[2] != " "
-        and tabuleiro[6] != simboloComputador
-        and tabuleiro[6] != " "
-        and tabuleiro[3] == " "
-    ):
-        j = 3
-    elif (
-        tabuleiro[2] != simboloComputador
-        and tabuleiro[2] != " "
-        and tabuleiro[4] != simboloComputador
-        and tabuleiro[4] != " "
-        and tabuleiro[1] == " "
-    ):
-        j = 1
-    elif (
-        tabuleiro[1] != simboloComputador
-        and tabuleiro[1] != " "
-        and tabuleiro[8] != simboloComputador
-        and tabuleiro[8] != " "
-        and tabuleiro[7] == " "
-    ):
-        j = 7
-
-    elif (
-        tabuleiro[1] == simboloComputador
-        and tabuleiro[9] != simboloComputador
-        and tabuleiro[3] == " "
-    ):
-        j = 3
-    elif (
-        tabuleiro[1] != simboloComputador
-        and tabuleiro[1] != " "
-        and tabuleiro[5] == " "
-    ):
-        j = 5
-    elif (
-        tabuleiro[3] != simboloComputador
-        and tabuleiro[3] != " "
-        and tabuleiro[5] == " "
-    ):
-        j = 5
-    elif (
-        tabuleiro[7] != simboloComputador
-        and tabuleiro[7] != " "
-        and tabuleiro[5] == " "
-    ):
-        j = 5
-    elif (
-        tabuleiro[9] != simboloComputador
-        and tabuleiro[9] != " "
-        and tabuleiro[5] == " "
-    ):
-        j = 5
-    elif (
-        tabuleiro[6] != simboloComputador
-        and tabuleiro[6] != " "
-        and tabuleiro[3] == " "
-    ):
-        j = 3
-
-    elif (
-        tabuleiro[8] != simboloComputador
-        and tabuleiro[8] != " "
-        and tabuleiro[7] == " "
-    ):
-        j = 7
-    elif (
-        tabuleiro[5] != simboloComputador
-        and tabuleiro[5] != " "
-        and tabuleiro[9] != simboloComputador
-        and tabuleiro[9] != " "
-        and tabuleiro[3] == " "
-    ):
-        j = 3
-
-    elif (
-        tabuleiro[5] != simboloComputador
-        and tabuleiro[5] != " "
-        and tabuleiro[6] != simboloComputador
-        and tabuleiro[6] != " "
-        and tabuleiro[4] != simboloComputador
-        and tabuleiro[4] != " "
-        and tabuleiro[2] == " "
+        board[7] == computerSymbol
+        and board[8] != computerSymbol
+        and board[9] != computerSymbol
+        and board[5] == computerSymbol
+        and board[6] == computerSymbol
+        and board[3] != computerSymbol
+        and board[4] != computerSymbol
+        and board[2] == " "
     ):
         j = 2
 
-    # Escolha dos espaços vazios
-    elif tabuleiro[1] == " ":
-        j = 1
-    elif tabuleiro[2] == " ":
-        j = 2
-    elif tabuleiro[5] == " ":
-        j = 5
-    elif tabuleiro[9] == " ":
+    elif defe(board, computerSymbol, 1, 2, 3):
+        return 3
+    elif defe(board, computerSymbol, 1, 3, 2):
+        return 2
+    elif defe(board, computerSymbol, 8, 5, 2):
+        return 2
+    elif defe(board, computerSymbol, 2, 3, 1):
+        return 1
+    elif defe(board, computerSymbol, 4, 5, 6):
+        return 6
+    elif defe(board, computerSymbol, 4, 6, 5):
+        return 5
+    elif defe(board, computerSymbol, 5, 6, 4):
+        return 4
+    elif defe(board, computerSymbol, 7, 1, 4):
+        return 4
+    elif defe(board, computerSymbol, 7, 8, 9):
+        return 9
+    elif defe(board, computerSymbol, 7, 9, 8):
+        return 8
+    elif defe(board, computerSymbol, 9, 8, 7):
+        return 7
+    elif defe(board, computerSymbol, 1, 4, 7):
+        return 7
+    elif defe(board, computerSymbol, 1, 5, 9):
+        return 9
+    elif defe(board, computerSymbol, 1, 9, 5):
+        return 5
+    elif defe(board, computerSymbol, 5, 9, 1):
+        return 1
+    elif defe(board, computerSymbol, 3, 5, 7):
+        return 7
+    elif defe(board, computerSymbol, 2, 5, 8):
+        return 8
+    elif defe(board, computerSymbol, 9, 3, 6):
+        return 6
+    elif defe(board, computerSymbol, 9, 6, 3):
+        return 3
+    elif defe(board, computerSymbol, 3, 6, 9):
+        return 9
+    elif defe(board, computerSymbol, 7, 2, 5):
+        return 5
+    elif defe(board, computerSymbol, 2, 8, 5):
+        return 5
+    elif defe(board, computerSymbol, 7, 3, 8) or defe(board, computerSymbol, 9, 1, 8):
+        return 8
+    elif defe(board, computerSymbol, 7, 5, 3):
+        return 3
+    elif defe(board, computerSymbol, 7, 4, 1):
+        return 1
+    elif board[1] == computerSymbol and board[8] == computerSymbol and board[9] == " ":
         j = 9
-    elif tabuleiro[7] == " ":
+    elif board[3] == computerSymbol and board[8] == computerSymbol and board[7] == " ":
         j = 7
-    elif tabuleiro[3] == " ":
+    elif board[9] == computerSymbol and board[2] == computerSymbol and board[1] == " ":
+        j = 1
+    elif board[7] == computerSymbol and board[2] == computerSymbol and board[3] == " ":
         j = 3
-    elif tabuleiro[4] == " ":
+    elif (
+        board[6] != computerSymbol
+        and board[6] != " "
+        and defe(board, computerSymbol, 8, 2, 9)
+    ):
+        return 9
+
+    elif (
+        board[1] == computerSymbol
+        and board[3] != computerSymbol
+        and board[2] != computerSymbol
+        and board[5] == " "
+    ):
+        j = 5
+
+    elif (
+        board[8] != computerSymbol
+        and board[7] == computerSymbol
+        and board[4] != computerSymbol
+        and board[3] == " "
+    ):
+        j = 5
+
+    elif (
+        board[1] == computerSymbol
+        and board[3] == computerSymbol
+        and board[4] != computerSymbol
+        and board[5] == " "
+    ):
+        j = 5
+
+    elif (
+        board[1] == computerSymbol
+        and board[2] != computerSymbol
+        and board[3] == computerSymbol
+        and board[7] == " "
+    ):
+        j = 7
+    elif board[1] == computerSymbol and board[3] == computerSymbol and board[5] == " ":
+        j = 5
+    elif (
+        board[1] == computerSymbol
+        and board[2] != computerSymbol
+        and board[2] != " "
+        and board[4] == " "
+    ):
         j = 4
-    elif tabuleiro[6] == " ":
+    elif (
+        board[1] == computerSymbol
+        and board[5] != computerSymbol
+        and board[5] != " "
+        and board[9] == " "
+    ):
+        j = 9
+    elif (
+        board[1] == computerSymbol
+        and board[7] != computerSymbol
+        and board[7] != " "
+        and board[9] == " "
+    ):
+        j = 9
+    elif (
+        board[8] != computerSymbol
+        and board[8] != " "
+        and board[3] != computerSymbol
+        and board[3] != " "
+        and board[9] == " "
+    ):
+        j = 9
+
+    elif (
+        board[2] != computerSymbol
+        and board[2] != " "
+        and board[4] != computerSymbol
+        and board[4] != " "
+        and board[5] == " "
+    ):
+        j = 5
+    elif (
+        board[6] != computerSymbol
+        and board[6] != " "
+        and board[2] != computerSymbol
+        and board[2] != " "
+        and board[3] == computerSymbol
+        and board[5] == " "
+    ):
+        j = 5
+    elif (
+        board[8] != computerSymbol
+        and board[8] != " "
+        and board[6] != computerSymbol
+        and board[6] != " "
+        and board[3] == " "
+    ):
+        j = 3
+    elif (
+        board[8] != computerSymbol
+        and board[8] != " "
+        and board[6] != computerSymbol
+        and board[6] != " "
+        and board[1] == " "
+    ):
+        j = 1
+    elif (
+        board[8] != computerSymbol
+        and board[8] != " "
+        and board[4] != computerSymbol
+        and board[4] != " "
+        and board[1] == " "
+    ):
+        j = 7
+    elif (
+        board[2] != computerSymbol
+        and board[2] != " "
+        and board[6] != computerSymbol
+        and board[6] != " "
+        and board[3] == " "
+    ):
+        j = 3
+    elif (
+        board[2] != computerSymbol
+        and board[2] != " "
+        and board[4] != computerSymbol
+        and board[4] != " "
+        and board[1] == " "
+    ):
+        j = 1
+    elif (
+        board[1] != computerSymbol
+        and board[1] != " "
+        and board[8] != computerSymbol
+        and board[8] != " "
+        and board[7] == " "
+    ):
+        j = 7
+
+    elif board[1] == computerSymbol and board[9] != computerSymbol and board[3] == " ":
+        j = 3
+    elif board[1] != computerSymbol and board[1] != " " and board[5] == " ":
+        j = 5
+    elif board[3] != computerSymbol and board[3] != " " and board[5] == " ":
+        j = 5
+    elif board[7] != computerSymbol and board[7] != " " and board[5] == " ":
+        j = 5
+    elif board[9] != computerSymbol and board[9] != " " and board[5] == " ":
+        j = 5
+    elif board[6] != computerSymbol and board[6] != " " and board[3] == " ":
+        j = 3
+
+    elif board[8] != computerSymbol and board[8] != " " and board[7] == " ":
+        j = 7
+    elif (
+        board[5] != computerSymbol
+        and board[5] != " "
+        and board[9] != computerSymbol
+        and board[9] != " "
+        and board[3] == " "
+    ):
+        j = 3
+
+    elif (
+        board[5] != computerSymbol
+        and board[5] != " "
+        and board[6] != computerSymbol
+        and board[6] != " "
+        and board[4] != computerSymbol
+        and board[4] != " "
+        and board[2] == " "
+    ):
+        j = 2
+
+    # choose empty positions.
+    elif board[1] == " ":
+        j = 1
+    elif board[2] == " ":
+        j = 2
+    elif board[5] == " ":
+        j = 5
+    elif board[9] == " ":
+        j = 9
+    elif board[7] == " ":
+        j = 7
+    elif board[3] == " ":
+        j = 3
+    elif board[4] == " ":
+        j = 4
+    elif board[6] == " ":
         j = 6
-    elif tabuleiro[8] == " ":
+    elif board[8] == " ":
         j = 8
     return j
 
 
-def verificaVencedor(x, o, c, d, e):
+def checksWinner(x, o, c, d, e):
     """
-    Recebe os parâmetros "x" e "o", as posições do tabuleiro e verifica se houve uma combinação
-    de três posições com o mesmo parâmetro. Por fim, retorna o vencedor (se houver), caso contrário retorna
+    It receives the "x" and "o" parameters, the board positions and checks if there was a combination
+    of three positions with the same parameter. Finally, returns the winner (if there is a winner), otherwise returns
     None.
     """
     if x == c and x == d and x == e:
@@ -482,133 +386,100 @@ def verificaVencedor(x, o, c, d, e):
         return None
 
 
-def verificaJogada(tabuleiro, simbolo, simboloComputador):
+def checksMove(board, symbol, computerSymbol, playerWins, computerWins, draws):
     """
-    Recebe o tabuleiro e
-    imprime se um jogador ('x' ou 'o') venceu a jogada e solicita se o usuário deseja jogar novamente.
+    Get the board,
+    prints if a player ('x' or 'o') won the game and asks if the user wants to play again.
     """
     if (
-        verificaVencedor(
-            simbolo, simboloComputador, tabuleiro[3], tabuleiro[5], tabuleiro[7]
-        )
-        == simbolo
-        or verificaVencedor(
-            simbolo, simboloComputador, tabuleiro[1], tabuleiro[5], tabuleiro[9]
-        )
-        == simbolo
-        or verificaVencedor(
-            simbolo, simboloComputador, tabuleiro[1], tabuleiro[2], tabuleiro[3]
-        )
-        == simbolo
-        or verificaVencedor(
-            simbolo, simboloComputador, tabuleiro[4], tabuleiro[5], tabuleiro[6]
-        )
-        == simbolo
-        or verificaVencedor(
-            simbolo, simboloComputador, tabuleiro[7], tabuleiro[8], tabuleiro[9]
-        )
-        == simbolo
-        or verificaVencedor(
-            simbolo, simboloComputador, tabuleiro[1], tabuleiro[4], tabuleiro[7]
-        )
-        == simbolo
-        or verificaVencedor(
-            simbolo, simboloComputador, tabuleiro[2], tabuleiro[5], tabuleiro[8]
-        )
-        == simbolo
-        or verificaVencedor(
-            simbolo, simboloComputador, tabuleiro[3], tabuleiro[6], tabuleiro[9]
-        )
-        == simbolo
+        checksWinner(symbol, computerSymbol, board[3], board[5], board[7]) == symbol
+        or checksWinner(symbol, computerSymbol, board[1], board[5], board[9]) == symbol
+        or checksWinner(symbol, computerSymbol, board[1], board[2], board[3]) == symbol
+        or checksWinner(symbol, computerSymbol, board[4], board[5], board[6]) == symbol
+        or checksWinner(symbol, computerSymbol, board[7], board[8], board[9]) == symbol
+        or checksWinner(symbol, computerSymbol, board[1], board[4], board[7]) == symbol
+        or checksWinner(symbol, computerSymbol, board[2], board[5], board[8]) == symbol
+        or checksWinner(symbol, computerSymbol, board[3], board[6], board[9]) == symbol
     ):
-        limpaTela()
-        imprimetabuleiro(tabuleiro)
-        print("Parabéns! Você venceu a partida!")
-        escolha = input(
-            "Que ótima jogada, meu caro!! Gostaria de jogar novamente? (Digite 'S' para continuar ou qualquer outra tecla para finalizar): "
+        cleanScreen()
+        playerWins += 1
+        printsResults(playerWins, computerWins, draws)
+        printsBoard(board)
+        print("Congratulations! you won the game!")
+        choice = input(
+            "What a great move, my dear!! Would you like to play again? (Type 'Y' to continue or any other key to end): "
         )
-        if escolha == "S" or escolha == "s":
-            programa()
+        if choice == "Y" or choice == "y":
+            program(playerWins, computerWins, draws)
         else:
             quit()
     elif (
-        verificaVencedor(
-            simbolo, simboloComputador, tabuleiro[3], tabuleiro[5], tabuleiro[7]
-        )
-        == simboloComputador
-        or verificaVencedor(
-            simbolo, simboloComputador, tabuleiro[1], tabuleiro[5], tabuleiro[9]
-        )
-        == simboloComputador
-        or verificaVencedor(
-            simbolo, simboloComputador, tabuleiro[1], tabuleiro[2], tabuleiro[3]
-        )
-        == simboloComputador
-        or verificaVencedor(
-            simbolo, simboloComputador, tabuleiro[4], tabuleiro[5], tabuleiro[6]
-        )
-        == simboloComputador
-        or verificaVencedor(
-            simbolo, simboloComputador, tabuleiro[7], tabuleiro[8], tabuleiro[9]
-        )
-        == simboloComputador
-        or verificaVencedor(
-            simbolo, simboloComputador, tabuleiro[1], tabuleiro[4], tabuleiro[7]
-        )
-        == simboloComputador
-        or verificaVencedor(
-            simbolo, simboloComputador, tabuleiro[2], tabuleiro[5], tabuleiro[8]
-        )
-        == simboloComputador
-        or verificaVencedor(
-            simbolo, simboloComputador, tabuleiro[3], tabuleiro[6], tabuleiro[9]
-        )
-        == simboloComputador
+        checksWinner(symbol, computerSymbol, board[3], board[5], board[7])
+        == computerSymbol
+        or checksWinner(symbol, computerSymbol, board[1], board[5], board[9])
+        == computerSymbol
+        or checksWinner(symbol, computerSymbol, board[1], board[2], board[3])
+        == computerSymbol
+        or checksWinner(symbol, computerSymbol, board[4], board[5], board[6])
+        == computerSymbol
+        or checksWinner(symbol, computerSymbol, board[7], board[8], board[9])
+        == computerSymbol
+        or checksWinner(symbol, computerSymbol, board[1], board[4], board[7])
+        == computerSymbol
+        or checksWinner(symbol, computerSymbol, board[2], board[5], board[8])
+        == computerSymbol
+        or checksWinner(symbol, computerSymbol, board[3], board[6], board[9])
+        == computerSymbol
     ):
-        limpaTela()
-        imprimetabuleiro(tabuleiro)
-        print("Que pena! O computador venceu a partida!")
-        escolha = input(
-            "Às vezes a vida é deveras complexa, meu bom. Gostaria de uma revanche? (Digite 'S' para continuar ou qualquer outra tecla para finalizar): "
+        cleanScreen()
+        computerWins += 1
+        printsResults(playerWins, computerWins, draws)
+        printsBoard(board)
+        print("What a shame! The computer won the game!")
+        choice = input(
+            "Sometimes life is really complex, my dear. Would you like a rematch? (Type 'Y' to continue or any other key to end): "
         )
-        if escolha == "S" or escolha == "s":
-            programa()
+        if choice == "Y" or choice == "y":
+            program(playerWins, computerWins, draws)
         else:
             quit()
     elif (
-        tabuleiro[1] != " "
-        and tabuleiro[2] != " "
-        and tabuleiro[3] != " "
-        and tabuleiro[4] != " "
-        and tabuleiro[5] != " "
-        and tabuleiro[6] != " "
-        and tabuleiro[7] != " "
-        and tabuleiro[8] != " "
-        and tabuleiro[9] != " "
+        board[1] != " "
+        and board[2] != " "
+        and board[3] != " "
+        and board[4] != " "
+        and board[5] != " "
+        and board[6] != " "
+        and board[7] != " "
+        and board[8] != " "
+        and board[9] != " "
     ):
-        limpaTela()
-        imprimetabuleiro(tabuleiro)
-        print("Empate!")
-        escolha = input(
-            "Gostaria de desempatar esse negócio e deixar clara a sua superioridade? (Digite 'S' para continuar ou qualquer outra tecla para finalizar): "
+        cleanScreen()
+        draws += 1
+        printsResults(playerWins, computerWins, draws)
+        printsBoard(board)
+        print("Draw!")
+        choice = input(
+            "Would you like to play again and make your superiority clear? (Type 'Y' to continue or any other key to end): "
         )
-        if escolha == "S" or escolha == "s":
-            programa()
+        if choice == "Y" or choice == "y":
+            program(playerWins, computerWins, draws)
         else:
+            cleanScreen()
             quit()
 
 
-def tabu():
+def board():
     """
-    Gera a lista inicial para construção do tabuleiro.
+    Generates the initial list for building the board.
     """
     l = [" ", " ", " ", " ", " ", " ", " ", " ", " ", " "]
     return l
 
 
-def imprimetabuleiro(l):
+def printsBoard(l):
     """
-    Recebe o tabuleiro e o imprime.
+    Receives the board and prints it.
     """
     print(f" {l[7]} | {l[8]} | {l[9]} ")
     print("---+---+---")
@@ -619,139 +490,153 @@ def imprimetabuleiro(l):
 
 def xo():
     """
-    Verifica qual símbolo (X ou O) o usuário deseja ser: se escolher "X" então o computador será "O" e vice-versa.
-    Retorna o símbolo do usuário e do computador.
-    (O programa aceitará X e O minúsculos também)
+    Checks which symbol (X or O) the user wants to be: if he chooses "X" then the computer will be "O" and vice versa.
+    Returns the user and computer symbol.
+    (The program will accept lowercase X and O as well)
     """
-    simbolo = input("Olá! Qual letra (X ou O) você gostria de ser? ")
-    if simbolo != "X" and simbolo != "O" and simbolo != "x" and simbolo != "o":
-        print("ERRO! Simbolo inválido!")
+    symbol = input("Hey! Which letter (X or O) would you like to be? ")
+    if symbol != "X" and symbol != "O" and symbol != "x" and symbol != "o":
+        print("ERROR! Invalid symbol!")
         return xo()
-    if simbolo == "X":
-        simmboloComputador = "O"
-    if simbolo == "O":
-        simmboloComputador = "X"
+    if symbol == "X":
+        computerSymbol = "O"
+    if symbol == "O":
+        computerSymbol = "X"
     # Minúsculo
-    if simbolo == "x":
-        simmboloComputador = "o"
-    if simbolo == "o":
-        simmboloComputador = "x"
-    return simbolo, simmboloComputador
+    if symbol == "x":
+        computerSymbol = "o"
+    if symbol == "o":
+        computerSymbol = "x"
+    return symbol, computerSymbol
 
 
-def primeiro():
+def first():
     """
-    Escolhe aleatóriamente quem começará jogando e retorna essa escolha.
+    Randomly chooses who starts playing and returns the choice.
     """
-    escolha = random.choice(["jogador", "computador"])
-    return escolha
+    choice = random.choice(["player", "computer"])
+    return choice
 
 
-def lista(posiçao, tabuleiro, simbolo):
+def list(position, board, symbol):
     """
-    Gera a atualização do tabuleiro conforme o jogo decorre.
+    Generates the board update as the game progresses.
     """
-    tabuleiro[posiçao] = simbolo
-    return tabuleiro
+    board[position] = symbol
+    return board
 
 
-def ocupaçao(tabuleiro, posiçaoo):
+def ocupation(board, positionn):
     """
-    Verifica se a posição que o usuário escolheu já está ocupada.
-    Caso esteja, gera uma mensagem de erro e retorna pra escolha da posição novamente.
+    Checks if the position the user has chosen is already occupied.
+    If it is, it generates an error message and returns to the position choice again.
     """
-    if tabuleiro[posiçaoo] != " ":
-        print("Posição já ocupada!")
-        return posiçao(tabuleiro)
-    return posiçaoo
+    if board[positionn] != " ":
+        print("Position already occupied!")
+        return position(board)
+    return positionn
 
 
-def posiçao(tabuleiro):
+def position(board):
     """
-    Solicita a escolha da posição do usuário e verifica se ela é válida.
-    Se não for válida, exibe uma mensagem de erro e solicita a esolha novamente.
-    Por fim, retorna a escolha válida do usuário.
+    Prompts for the user's position choice and checks if it is valid.
+    If not valid, it displays an error message and prompts you to choose again.
+    Finally, it returns the user's valid choice.
     """
-    posiçaoo = input("Escolha qual posição deseja marcar: ")
+    positionn = input("Choose Which position you want to move: ")
     if (
-        posiçaoo != "1"
-        and posiçaoo != "2"
-        and posiçaoo != "3"
-        and posiçaoo != "4"
-        and posiçaoo != "5"
-        and posiçaoo != "6"
-        and posiçaoo != "7"
-        and posiçaoo != "8"
-        and posiçaoo != "9"
+        positionn != "1"
+        and positionn != "2"
+        and positionn != "3"
+        and positionn != "4"
+        and positionn != "5"
+        and positionn != "6"
+        and positionn != "7"
+        and positionn != "8"
+        and positionn != "9"
     ):
-        print("ERRO: você deve digitar um número de 1-9!")
-        return posiçao(tabuleiro)
-    p = int(posiçaoo)
-    position = ocupaçao(tabuleiro, p)
-    return position
+        print("ERROR: you must type a number between 1-9!")
+        return position(board)
+    p = int(positionn)
+    positionn = ocupation(board, p)
+    return positionn
 
 
-def jogada(tabuleiro, simbolo, simboloComputador):
+def move(board, symbol, computerSymbol, playerWins, computerWins, draws):
     """
-    Promove o fluxo do jogo quando o usuário é quem começa.
+    It promotes the flow of the game when the user is the one who starts.
     """
-    imprimetabuleiro(tabuleiro)
-    posiçaoo = posiçao(tabuleiro)
-    t = lista(posiçaoo, tabuleiro, simbolo)
-    verificaJogada(tabuleiro, simbolo, simboloComputador)
-    compjogada = jogadaComputador(t, simboloComputador)
-    t = lista(compjogada, t, simboloComputador)
-    verificaJogada(tabuleiro, simbolo, simboloComputador)
-    limpaTela()
-    return jogada(t, simbolo, simboloComputador)
+    printsResults(playerWins, computerWins, draws)
+    printsBoard(board)
+    positionn = position(board)
+    t = list(positionn, board, symbol)
+    checksMove(board, symbol, computerSymbol, playerWins, computerWins, draws)
+    compMove = computerMove(t, computerSymbol)
+    cleanScreen()
+    printsResults(playerWins, computerWins, draws)
+    printsBoard(t)
+    t = list(compMove, t, computerSymbol)
+    checksMove(board, symbol, computerSymbol, playerWins, computerWins, draws)
+    print("Computer is thinking...")
+    sleep(2)
+    cleanScreen()
+    return move(t, symbol, computerSymbol, playerWins, computerWins, draws)
 
 
-def jogada2(tabuleiro, simbolo, simboloComputador):
+def move2(board, symbol, computerSymbol, playerWins, computerWins, draws):
     """
-    Promove o fluxo do jogo quando o computador é quem começa.
+    It promotes the flow of the game when the computer starts.
     """
-    compjogada = jogadaComputador(tabuleiro, simboloComputador)
-    t = lista(compjogada, tabuleiro, simboloComputador)
-    verificaJogada(tabuleiro, simbolo, simboloComputador)
-    imprimetabuleiro(t)
-    posiçaoo = posiçao(t)
-    t = lista(posiçaoo, t, simbolo)
-    verificaJogada(tabuleiro, simbolo, simboloComputador)
-    limpaTela()
-    return jogada2(t, simbolo, simboloComputador)
+    compMove = computerMove(board, computerSymbol)
+    printsResults(playerWins, computerWins, draws)
+    printsBoard(board)
+    t = list(compMove, board, computerSymbol)
+    checksMove(board, symbol, computerSymbol, playerWins, computerWins, draws)
+    print("Computer is thinking...")
+    sleep(2)
+    cleanScreen()
+    printsResults(playerWins, computerWins, draws)
+    printsBoard(t)
+    positionn = position(t)
+    t = list(positionn, t, symbol)
+    checksMove(board, symbol, computerSymbol, playerWins, computerWins, draws)
+    cleanScreen()
+    return move2(t, symbol, computerSymbol, playerWins, computerWins, draws)
 
 
-def jogo(escolha, simbolo, simboloComputador):
+def game(choice, symbol, computerSymbol, playerWins, computerWins, draws):
     """
-    Recebe a escolha de quem começa e os símbolos dos participantes, então direciona o jogo para
-    o fluxo 1 ou 2 (jogada e jogada2).
+    Receives the choice of who starts and the symbols of the participants, then directs the game to
+    flow 1 or 2 (move and move2).
     """
-    l = tabu()  # Tabuleiro inicial.
-    if escolha == "jogador":
-        print("Você começa.")
-        jogada(l, simbolo, simboloComputador)
-    elif escolha == "computador":
-        print("O computador começa.")
-        jogada2(l, simbolo, simboloComputador)
+    l = board()  # Initial board.
+    if choice == "player":
+        print("You go first.")
+        move(l, symbol, computerSymbol, playerWins, computerWins, draws)
+    elif choice == "computer":
+        print("Computer goes first.")
+        move2(l, symbol, computerSymbol, playerWins, computerWins, draws)
 
 
-def programa():
+def program(playerWins, computerWins, draws):
     """
-    Gera os parâmetros básicos para o resto das funções e direciona para o resto do programa.
+    It generates the basic parameters for the rest of the functions and directs them to the rest of the program.
     """
-    limpaTela()
-    print("Bem-vindo ao jogo da Velha!")
-    simbolo, simboloComputador = xo()
-    escolha = primeiro()
-    jogo(escolha, simbolo, simboloComputador)
+    cleanScreen()
+    print("Welcome to TicTacToe!")
+    symbol, computerSymbol = xo()
+    choice = first()
+    game(choice, symbol, computerSymbol, playerWins, computerWins, draws)
 
 
 def main():
-    limpaTela()
-    _ = input("Pressione qualquer tecla para continuar -->")
-    programa()
+    cleanScreen()
+    _ = input("Press any button to continue -->")
+    playerWins = 0
+    computerWins = 0
+    draws = 0
+    program(playerWins, computerWins, draws)
 
 
-## NÃO ALTERE O CÓDIGO ABAIXO ##
 if __name__ == "__main__":
     main()
